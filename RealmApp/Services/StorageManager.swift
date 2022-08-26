@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import SwiftUI
 
 class StorageManager {
     static let shared = StorageManager()
@@ -42,13 +43,13 @@ class StorageManager {
             taskList.name = newValue
         }
     }
-
+    
     func done(_ taskList: TaskList) {
         write {
             taskList.tasks.setValue(true, forKey: "isComplete")
         }
     }
-
+    
     // MARK: - Tasks
     func save(_ task: String, withNote note: String, to taskList: TaskList, completion: (Task) -> Void) {
         write {
@@ -71,7 +72,15 @@ class StorageManager {
     }
     
     func doneTask(_ task: Task) {
-        task.setValue("true", forKey: "isComplete")
+        write {
+            task.setValue(true, forKey: "isComplete")
+        }
+    }
+    
+    func undoneTask(_ task: Task) {
+        write {
+            task.setValue(false, forKey: "isComplete")
+        }
     }
     
     private func write(completion: () -> Void) {
@@ -80,7 +89,7 @@ class StorageManager {
                 completion()
             }
         } catch {
-            print(error)
+            print(error.localizedDescription)
         }
     }
 }

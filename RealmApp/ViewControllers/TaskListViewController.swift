@@ -84,7 +84,13 @@ class TaskListViewController: UITableViewController {
     }
 
     @IBAction func sortingList(_ sender: UISegmentedControl) {
-        
+        if sender.selectedSegmentIndex == 0 {
+            taskLists = taskLists.sorted(byKeyPath: "date")
+            tableView.reloadData()
+        } else {
+            taskLists = taskLists.sorted(byKeyPath: "name")
+            tableView.reloadData()
+        }
     }
     
     @objc private func addButtonPressed() {
