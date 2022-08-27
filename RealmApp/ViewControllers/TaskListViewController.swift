@@ -10,9 +10,10 @@ import UIKit
 import RealmSwift
 
 class TaskListViewController: UITableViewController {
-
+    
     var taskLists: Results<TaskList>!
     
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         let addButton = UIBarButtonItem(
@@ -32,7 +33,7 @@ class TaskListViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    // MARK: - Table view data source
+    // MARK: - Table view Data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         taskLists.count
     }
@@ -42,7 +43,14 @@ class TaskListViewController: UITableViewController {
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
         content.text = taskList.name
-        content.secondaryText = "\(taskList.tasks.count)"
+        
+        if !taskList.tasks.filter("isComplete = false").isEmpty {
+            content.secondaryText = String(taskList.tasks.filter("isComplete = false").count)
+        } else if !taskList.tasks.filter("isComplete = true").isEmpty {
+            content.secondaryText = "CHEK"
+        } else {
+            content.secondaryText = "0"
+        }
         cell.contentConfiguration = content
         return cell
     }
@@ -82,7 +90,8 @@ class TaskListViewController: UITableViewController {
         let taskList = taskLists[indexPath.row]
         tasksVC.taskList = taskList
     }
-
+    
+    // MARK: - IBActions
     @IBAction func sortingList(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
             taskLists = taskLists.sorted(byKeyPath: "date")
@@ -93,6 +102,7 @@ class TaskListViewController: UITableViewController {
         }
     }
     
+    // MARK: - Private Methods
     @objc private func addButtonPressed() {
         showAlert()
     }
@@ -104,6 +114,7 @@ class TaskListViewController: UITableViewController {
     }
 }
 
+// MARK: - Alert Controller
 extension TaskListViewController {
     
     private func showAlert(with taskList: TaskList? = nil, completion: (() -> Void)? = nil) {
@@ -129,3 +140,4 @@ extension TaskListViewController {
         }
     }
 }
+

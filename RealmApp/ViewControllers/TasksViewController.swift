@@ -53,16 +53,15 @@ class TasksViewController: UITableViewController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let task: Task
+        let doneTitle: String
         if indexPath.section == 0 {
             task = currentTasks[indexPath.row]
+            doneTitle = "Done"
         } else {
             task = completedTasks[indexPath.row]
+            doneTitle = "Undone"
         }
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
@@ -77,13 +76,10 @@ class TasksViewController: UITableViewController {
             isDone(true)
         }
         
-        let doneAction = UIContextualAction(style: .normal, title: title) { _, _, isDone in
-            let indexPath = indexPath.section
-            if indexPath == 0 {
-                self.title = "Done"
+        let doneAction = UIContextualAction(style: .normal, title: doneTitle) { _, _, isDone in
+            if indexPath.section == 0 {
                 StorageManager.shared.doneTask(task)
             } else {
-                self.title = "Undone"
                 StorageManager.shared.undoneTask(task)
             }
             tableView.reloadData()
@@ -96,12 +92,19 @@ class TasksViewController: UITableViewController {
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
     
+    
+    // MARK: - Table View Delegate
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    // MARK: - Private Methods
     @objc private func addButtonPressed() {
         showAlert()
     }
-    
 }
 
+// MARK: - Alert Controller
 extension TasksViewController {
     private func showAlert(with task: Task? = nil, completion: (() -> Void)? = nil) {
         let title = task != nil ? "Edit Task" : "New Task"
@@ -127,4 +130,3 @@ extension TasksViewController {
         }
     }
 }
-
