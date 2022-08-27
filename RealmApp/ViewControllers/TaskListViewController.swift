@@ -47,7 +47,7 @@ class TaskListViewController: UITableViewController {
         if !taskList.tasks.filter("isComplete = false").isEmpty {
             content.secondaryText = String(taskList.tasks.filter("isComplete = false").count)
         } else if !taskList.tasks.filter("isComplete = true").isEmpty {
-            content.secondaryText = "CHEK"
+            content.secondaryText = "✔️"
         } else {
             content.secondaryText = "0"
         }
